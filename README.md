@@ -7,6 +7,7 @@ The game is written entirely in one HTML document to keep it small and very simp
 
 # To run 
 Simply download the HTML file and run it in any modern browser.
+Control the snake with the arrow keys. The game will start automatically when you press an arrow key after you open the page
 
 # How to contribute
 There are a ton of ways to make this better. Feel free to fork the repo and add new features. If they work well, I'll merge them.
