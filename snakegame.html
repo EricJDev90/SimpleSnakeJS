@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Snake-JavaScript</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="ie-edge">
+    <style>
+        h1 {
+            text-align: center;
+            display: block;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 0;
+        }
+
+        main {
+            min-height: 85vh;
+            width: 99vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            background-color: black;
+        }
+
+        #game-board {
+            background-color: #CCC;
+            width: 80vmin;
+            height: 80vmin;
+            display: grid;
+            grid-template-rows: repeat(21, 1fr);
+            grid-template-columns: repeat(21, 1fr);
+        }
+
+        .snake {
+            border: .25vmin solid black;
+            background-color: hsl(200, 100%, 50%);
+        }
+
+        .food {
+            border: .25vmin solid black;
+            background-color: hsl(50, 100%, 50%);
+        }
+    </style>
+</head>
+<body>
+    <h1>Snake in JS</h1>
+    <h2>Score:</h2>
+    <h2 id="score-board">0</h2>
+    <main>
+        <div id="game-board"></div>
+    </main>
+    <script>
+        /*Snake Game in Javascript*/
+        let lastRenderTime = 0;
+        let inputDirection = {x: 0, y: 0}
+        let lastInputDirection = {x: 0, y: 0}
+        let food = {x: 10, y: 5}
+        let newSegments = 0
+        let score = 0
+
+        var SNAKE_SPEED = 6;
+        var EXPANSION_RATE = 1;
+        var GRID_SIZE = 21;
+
+        const snakeBody = [{x:11, y:11}]
+        const gameBoard = document.getElementById("game-board")
+        const scoreBoard = document.getElementById("score-board")
+
+        window.addEventListener('keydown', e => {
+            lastInputDirection = inputDirection
+            switch (e.key) {
+                case 'ArrowUp':
+                    if (lastInputDirection.y !== 0) break
+                    inputDirection = {x:0, y: -1}
+                    break
+                case 'ArrowDown':
+                    if (lastInputDirection.y !== 0) break
+                    inputDirection = {x:0, y: 1}
+                    break
+                case 'ArrowLeft':
+                    if (lastInputDirection.x !== 0) break   
+                    inputDirection = {x:-1, y: 0}
+                    break
+                case 'ArrowRight':
+                    if (lastInputDirection.x !== 0) break
+                    inputDirection = {x:1, y: 0}
+                    break
+            }
+        })
+
+        function main(currentTime) {
+            window.requestAnimationFrame(main)
+            const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000
+            if (secondsSinceLastRender < 1 / SNAKE_SPEED) return 
+            console.log("Render");
+            lastRenderTime = currentTime
+
+            update()
+            draw()
+            SNAKE_SPEED = 6;
+
+            if (gameOver) {
+                if (confirm("You lost. Press OK to restart.")) {
+                    window.location = "snakegame.html"
+                }
+                else return SNAKE_SPEED = 0, alert("Thank you for playing") 
+            }
+
+        };
+
+        window.requestAnimationFrame(main);
+
+        function drawSnake(gameBoard) {
+            snakeBody.forEach(segment => {
+                const snakeElement = document.createElement('div');
+                snakeElement.style.gridRowStart = segment.y
+                snakeElement.style.gridColumnStart = segment.x
+                snakeElement.classList.add('snake')
+                gameBoard.appendChild(snakeElement)
+            })
+        }
+
+        function draw() {
+            gameBoard.innerHTML = ""
+            drawSnake(gameBoard)
+            drawFood(gameBoard)
+        }
+
+        function update() {
+            for (let i = snakeBody.length - 2; i >= 0; i--) {
+                snakeBody[i + 1] = { ...snakeBody[i] }
+            }
+            snakeBody[0].x += inputDirection.x
+            snakeBody[0].y += inputDirection.y
+
+            if(onSnake(food)) {
+                addSegments(EXPANSION_RATE)
+                food = getRandomFoodPosition()
+            }
+            checkDeath();
+        }
+
+        function drawFood(gameBoard) {
+            const foodElement = document.createElement('div');
+            foodElement.style.gridRowStart = food.y
+            foodElement.style.gridColumnStart = food.x
+            foodElement.classList.add('food')
+            gameBoard.appendChild(foodElement)
+        }
+
+        function onSnake(position, { ignoreHead = false } = {}) {
+            return snakeBody.some((segment, index) => {
+                if ( ignoreHead && index === 0 ) return false
+                return equalPositions(segment, position)
+            })
+        }
+
+        function equalPositions(pos1, pos2) {
+            return (pos1.x === pos2.x && pos1.y === pos2.y)
+        }
+
+        function addSegments(amount) {
+            newSegments += amount
+            updateScore();
+            for (let i = 0; i < newSegments; i++) {
+                snakeBody.push({ ...snakeBody[snakeBody.length] })
+            }
+            newSegments = 0
+        }
+
+        function getRandomFoodPosition() {
+            let newFoodPosition;
+            while ((newFoodPosition == null) || onSnake(newFoodPosition)) {
+                newFoodPosition = randomGridPosition()
+            }
+            return newFoodPosition
+        }
+
+        function randomGridPosition() {
+            return {
+                x: Math.floor(Math.random() * GRID_SIZE) + 1,
+                y: Math.floor(Math.random() * GRID_SIZE) + 1
+            }
+        }
+
+        function checkDeath() {
+            gameOver = outsideGrid(snakeBody[0]) || snakeIntersection()
+        }
+
+        function outsideGrid(position) {
+            return (
+                position.x < 1 || position.x > GRID_SIZE || position.y < 1 || position.y > GRID_SIZE
+            )
+        }
+
+        function snakeIntersection() {
+            return onSnake(snakeBody[0], { ignoreHead: true })
+        }
+
+        function updateScore() {
+            scoreBoard.innerHTML = (score += 10)
+        }
+    </script>
+</body>
+</html>
