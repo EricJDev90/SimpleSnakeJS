@@ -29,7 +29,7 @@
             background-color: #CCC;
             width: 80vmin;
             height: 80vmin;
-            display: grid;
+            display: none;
             grid-template-rows: repeat(21, 1fr);
             grid-template-columns: repeat(21, 1fr);
         }
@@ -43,6 +43,11 @@
             border: .25vmin solid black;
             background-color: hsl(50, 100%, 50%);
         }
+
+        #splashscreen {
+            background-color: aqua;
+        }
+
     </style>
 </head>
 <body>
@@ -51,6 +56,10 @@
     <h2 id="score-board">0</h2>
     <main>
         <div id="game-board"></div>
+        <div id="splashscreen">
+            <h2>Snake in JS!</h2>
+            <input id="startbutton" type="button" value="Start" onclick="startFunction()"/>
+        </div>
     </main>
     <script>
         /*Snake Game in Javascript*/
@@ -68,28 +77,40 @@
         const snakeBody = [{x:11, y:11}]
         const gameBoard = document.getElementById("game-board")
         const scoreBoard = document.getElementById("score-board")
+        const startbutton = document.getElementById("startbutton")
 
-        window.addEventListener('keydown', e => {
-            lastInputDirection = inputDirection
-            switch (e.key) {
-                case 'ArrowUp':
-                    if (lastInputDirection.y !== 0) break
-                    inputDirection = {x:0, y: -1}
-                    break
-                case 'ArrowDown':
-                    if (lastInputDirection.y !== 0) break
-                    inputDirection = {x:0, y: 1}
-                    break
-                case 'ArrowLeft':
-                    if (lastInputDirection.x !== 0) break   
-                    inputDirection = {x:-1, y: 0}
-                    break
-                case 'ArrowRight':
-                    if (lastInputDirection.x !== 0) break
-                    inputDirection = {x:1, y: 0}
-                    break
-            }
-        })
+        //Display start screen
+        function startFunction(click) {
+            console.log("Started!")
+            document.getElementById("splashscreen").style.display = "none"
+            document.getElementById("game-board").style.display = "grid"
+            controls()
+        }
+
+        //while (gamestart == true) { //if gamestart is true, give players control over the player
+        function controls(input) {
+            window.addEventListener('keydown', e => {
+                lastInputDirection = inputDirection
+                switch (e.key) {
+                    case 'ArrowUp':
+                        if (lastInputDirection.y !== 0) break
+                        inputDirection = {x:0, y: -1}
+                        break
+                    case 'ArrowDown':
+                        if (lastInputDirection.y !== 0) break
+                        inputDirection = {x:0, y: 1}
+                        break
+                    case 'ArrowLeft':
+                        if (lastInputDirection.x !== 0) break   
+                        inputDirection = {x:-1, y: 0}
+                        break
+                    case 'ArrowRight':
+                        if (lastInputDirection.x !== 0) break
+                        inputDirection = {x:1, y: 0}
+                        break
+                }
+            })
+        }
 
         function main(currentTime) {
             window.requestAnimationFrame(main)
@@ -97,6 +118,7 @@
             if (secondsSinceLastRender < 1 / SNAKE_SPEED) return 
             console.log("Render");
             lastRenderTime = currentTime
+
 
             update()
             draw()
@@ -203,6 +225,7 @@
         function updateScore() {
             scoreBoard.innerHTML = (score += 10)
         }
+        
     </script>
 </body>
 </html>
