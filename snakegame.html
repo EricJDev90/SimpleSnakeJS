@@ -55,7 +55,9 @@
     <h2>Score:</h2>
     <h2 id="score-board">0</h2>
     <main>
+        <!--Create main game board-->
         <div id="game-board"></div>
+        <!--Create cover for start screen-->
         <div id="splashscreen">
             <h2>Snake in JS!</h2>
             <input id="startbutton" type="button" value="Start" onclick="startFunction()"/>
@@ -63,6 +65,9 @@
     </main>
     <script>
         /*Snake Game in Javascript*/
+
+        /*Create variables that store the last render, or drawing of the screen, the direction input to increase when a button is pressed, the last input given, 
+        the initial placement of the food, number of new segments, and the score*/
         let lastRenderTime = 0;
         let inputDirection = {x: 0, y: 0}
         let lastInputDirection = {x: 0, y: 0}
@@ -70,10 +75,12 @@
         let newSegments = 0
         let score = 0
 
+        /*Set the constants for how the game will run*/
         var SNAKE_SPEED = 6;
         var EXPANSION_RATE = 1;
-        var GRID_SIZE = 21;
+        var GRID_SIZE = 21; //21 squares for the horizontal game board and 21 for the vertical game board
 
+        /*Set where the initial snake body will be placed and the selectors for the HTML*/
         const snakeBody = [{x:11, y:11}]
         const gameBoard = document.getElementById("game-board")
         const scoreBoard = document.getElementById("score-board")
@@ -81,19 +88,19 @@
 
         //Display start screen
         function startFunction(click) {
-            console.log("Started!")
-            document.getElementById("splashscreen").style.display = "none"
-            document.getElementById("game-board").style.display = "grid"
-            controls()
+            console.log("Started!") //Debug log
+            document.getElementById("splashscreen").style.display = "none" //Hide the splash screen on start
+            document.getElementById("game-board").style.display = "grid" //Show the game board when started
+            controls() //Enable controls for the snake
         }
 
         function controls(input) {
-            window.addEventListener('keydown', e => {
-                lastInputDirection = inputDirection
-                switch (e.key) {
+            window.addEventListener('keydown', e => { //Create an event listener for a keypress
+                lastInputDirection = inputDirection //Store the last input as the current input when a button is pressed
+                switch (e.key) { //Switch statement for each of the arrow keys, storing the input direction as the amount of change when the board is re-drawn
                     case 'ArrowUp':
                         if (lastInputDirection.y !== 0) break
-                        inputDirection = {x:0, y: -1}
+                        inputDirection = {x:0, y: -1} //Because the x or y directions start at 0 and increase from the top left, you have to subtract 1 from the y position to move up
                         break
                     case 'ArrowDown':
                         if (lastInputDirection.y !== 0) break
@@ -111,7 +118,7 @@
             })
         }
 
-        function main(currentTime) {
+        function main(currentTime) { //Create a counter to tell the program when to redraw the screen
             window.requestAnimationFrame(main)
             const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000
             if (secondsSinceLastRender < 1 / SNAKE_SPEED) return 
