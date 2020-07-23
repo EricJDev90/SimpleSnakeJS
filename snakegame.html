@@ -46,6 +46,26 @@
 
         #splashscreen {
             background-color: aqua;
+            width: 80vw;
+            height: 80vh;
+            text-align: center;
+        }
+
+        #splashscreen-content {
+            margin-top: 35vh;
+        }
+
+        #splashscreen input {
+            height: 25%;
+            width: 25%;
+        }
+
+        #controls-style {
+            border: white 1px solid;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 3vh;
+            width: 25%;
         }
 
     </style>
@@ -58,9 +78,15 @@
         <!--Create main game board-->
         <div id="game-board"></div>
         <!--Create cover for start screen-->
-        <div id="splashscreen">
-            <h2>Snake in JS!</h2>
-            <input id="startbutton" type="button" value="Start" onclick="startFunction()"/>
+        <div id="splashscreen"> 
+            <div id="splashscreen-content">
+                <h2>Snake in JS!</h2>
+                <input id="startbutton" type="button" value="Start(Enter)" onclick="startFunction()"/>
+                <div id="controls-style">
+                    <p>Controls:</p>
+                    <p>Move snake: arrow keys</p>
+                </div>
+            </div>
         </div>
     </main>
     <script>
@@ -74,6 +100,7 @@
         let food = {x: 10, y: 5}
         let newSegments = 0
         let score = 0
+        let gamestarted = false
 
         window.requestAnimationFrame(main); //start initial animation frame request
 
@@ -90,11 +117,23 @@
 
         //Display start screen
         function startFunction(click) {
-            console.log("Started!") //Debug log
-            document.getElementById("splashscreen").style.display = "none" //Hide the splash screen on start
-            document.getElementById("game-board").style.display = "grid" //Show the game board when started
-            controls() //Enable controls for the snake
+            if (gamestarted == false) {
+                console.log("Started!") //Debug log
+                document.getElementById("splashscreen").style.display = "none" //Hide the splash screen on start
+                document.getElementById("game-board").style.display = "grid" //Show the game board when started
+                controls() //Enable controls for the snake
+                gamestarted = true
+            }
         }
+
+        window.addEventListener('keydown', e => { //Event listenter for if Enter is pressed to start the game
+            if ((e.key) == 'Enter') { //check if the key pressed is the enter key
+                startFunction(); //if true, start the game
+            }
+            /*switch (e.key) { //written a different way
+                case 'Enter': startFunction();
+            }*/
+        });
 
         function controls(input) {
             window.addEventListener('keydown', e => { //Create an event listener for a keypress
