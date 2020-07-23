@@ -75,6 +75,8 @@
         let newSegments = 0
         let score = 0
 
+        window.requestAnimationFrame(main); //start initial animation frame request
+
         /*Set the constants for how the game will run*/
         var SNAKE_SPEED = 6;
         var EXPANSION_RATE = 1;
@@ -119,59 +121,55 @@
         }
 
         function main(currentTime) { //Create a counter to tell the program when to redraw the screen
-            window.requestAnimationFrame(main)
-            const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000
-            if (secondsSinceLastRender < 1 / SNAKE_SPEED) return 
-            console.log("Render");
-            lastRenderTime = currentTime
+            window.requestAnimationFrame(main) //get the animation frame of the current function
+            const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000 //figures out how long it has been since last render
+            if (secondsSinceLastRender < 1 / SNAKE_SPEED) return //if the time is less than 1, exit function, this controls the speed of the render
+            console.log("Render"); //debug console log
+            lastRenderTime = currentTime //sets the last render time to the current time
 
 
-            update()
-            draw()
-            SNAKE_SPEED = 6;
+            update() //runs the update function, advancing the game by a frame
+            draw() //redraws the gameboard with the new frame parameters
 
-            if (gameOver) {
-                if (confirm("You lost. Press OK to restart.")) {
-                    window.location = "snakegame.html"
+            if (gameOver) { //if gameOver function returns true, alert the user that they lost the game.
+                if (confirm("You lost. Press OK to restart.")) { //alert that you lost the game with ok and cancel box
+                    window.location = "snakegame.html" //if confirm returns true (the user chooses OK, reload the page)
                 }
-                else return SNAKE_SPEED = 0, alert("Thank you for playing") 
+                else return SNAKE_SPEED = 0, alert("Thank you for playing") //if the user chooses cancel, set the speed to 0 and tell the player thank you for playing. page must be reloaded to play again
             }
-
         };
 
-        window.requestAnimationFrame(main);
-
-        function drawSnake(gameBoard) {
-            snakeBody.forEach(segment => {
-                const snakeElement = document.createElement('div');
-                snakeElement.style.gridRowStart = segment.y
-                snakeElement.style.gridColumnStart = segment.x
-                snakeElement.classList.add('snake')
-                gameBoard.appendChild(snakeElement)
+        function drawSnake(gameBoard) { //draws the snake on the game board
+            snakeBody.forEach(segment => { //do the following for each segment of the snake
+                const snakeElement = document.createElement('div'); //create a new snake body at the new positions
+                snakeElement.style.gridRowStart = segment.y //set the new snake element y position
+                snakeElement.style.gridColumnStart = segment.x //set the new snake element x position
+                snakeElement.classList.add('snake') //add a new snake class to the new div, styling the snake body
+                gameBoard.appendChild(snakeElement) //add a new snake element to the gameboard
             })
         }
 
-        function draw() {
-            gameBoard.innerHTML = ""
-            drawSnake(gameBoard)
-            drawFood(gameBoard)
+        function draw() { //draw the game board with the snake and food
+            gameBoard.innerHTML = "" //replace the gameboard with an empty string
+            drawSnake(gameBoard) //call the drawsnake function, passing the game board constant into it. This redraws the snake
+            drawFood(gameBoard) //same as above but for the food
         }
 
-        function update() {
-            for (let i = snakeBody.length - 2; i >= 0; i--) {
+        function update() { //update the position of each snake segment
+            for (let i = snakeBody.length - 2; i >= 0; i--) { //select each segment and increase by the new input directions
                 snakeBody[i + 1] = { ...snakeBody[i] }
             }
-            snakeBody[0].x += inputDirection.x
+            snakeBody[0].x += inputDirection.x //increase the position of the head of the snake by the input directions
             snakeBody[0].y += inputDirection.y
 
-            if(onSnake(food)) {
+            if(onSnake(food)) { //if onSnake(food) = true (the snake is on top of the food), add a new segment by the expansion rate amount
                 addSegments(EXPANSION_RATE)
-                food = getRandomFoodPosition()
+                food = getRandomFoodPosition() //generate new food position
             }
-            checkDeath();
+            checkDeath(); //finally, check if the snake is either outside of the boundary or running into itself
         }
 
-        function drawFood(gameBoard) {
+        function drawFood(gameBoard) { //draw a new food piece, using the same logic as drawing the snake, minus looping through each segment
             const foodElement = document.createElement('div');
             foodElement.style.gridRowStart = food.y
             foodElement.style.gridColumnStart = food.x
@@ -179,7 +177,7 @@
             gameBoard.appendChild(foodElement)
         }
 
-        function onSnake(position, { ignoreHead = false } = {}) {
+        function onSnake(position, { ignoreHead = false } = {}) { 
             return snakeBody.some((segment, index) => {
                 if ( ignoreHead && index === 0 ) return false
                 return equalPositions(segment, position)
@@ -191,15 +189,15 @@
         }
 
         function addSegments(amount) {
-            newSegments += amount
-            updateScore();
-            for (let i = 0; i < newSegments; i++) {
+            newSegments += amount //add the number of new segments to be added
+            updateScore(); //adds a new score
+            for (let i = 0; i < newSegments; i++) { //adds the new snake body segments to the snake 
                 snakeBody.push({ ...snakeBody[snakeBody.length] })
             }
-            newSegments = 0
+            newSegments = 0 //resets the new segments to 0
         }
 
-        function getRandomFoodPosition() {
+        function getRandomFoodPosition() { //get new food position and check if the snake is on the food position
             let newFoodPosition;
             while ((newFoodPosition == null) || onSnake(newFoodPosition)) {
                 newFoodPosition = randomGridPosition()
@@ -207,28 +205,28 @@
             return newFoodPosition
         }
 
-        function randomGridPosition() {
+        function randomGridPosition() { //Generate a random position on the grid
             return {
                 x: Math.floor(Math.random() * GRID_SIZE) + 1,
                 y: Math.floor(Math.random() * GRID_SIZE) + 1
             }
         }
 
-        function checkDeath() {
+        function checkDeath() { //check if the snake is intersecting itself or outside the grid
             gameOver = outsideGrid(snakeBody[0]) || snakeIntersection()
         }
 
-        function outsideGrid(position) {
+        function outsideGrid(position) { //will return true if the x or y position is > the grid size or less than 1
             return (
-                position.x < 1 || position.x > GRID_SIZE || position.y < 1 || position.y > GRID_SIZE
+                position.x < 1 || position.x > GRID_SIZE || position.y < 1 || position.y > GRID_SIZE 
             )
         }
 
-        function snakeIntersection() {
+        function snakeIntersection() { //check if the snake is running into itself, importantly while ignoring the head of the snake
             return onSnake(snakeBody[0], { ignoreHead: true })
         }
 
-        function updateScore() {
+        function updateScore() { //update the score if the snake eats something. this is called within the addSegments function
             scoreBoard.innerHTML = (score += 10)
         }
         
