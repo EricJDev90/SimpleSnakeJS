@@ -110,17 +110,18 @@
         var GRID_SIZE = 21; //21 squares for the horizontal game board and 21 for the vertical game board
 
         /*Set where the initial snake body will be placed and the selectors for the HTML*/
-        const snakeBody = [{x:11, y:11}]
-        const gameBoard = document.getElementById("game-board")
-        const scoreBoard = document.getElementById("score-board")
-        const startbutton = document.getElementById("startbutton")
+        const snakeBody = [{x:11, y:11}];
+        const gameBoard = document.getElementById("game-board");
+        const scoreBoard = document.getElementById("score-board");
+        const startbutton = document.getElementById("startbutton");
+        const splashScreen = document.getElementById("splashscreen");
 
         //Display start screen
         function startFunction(click) {
             if (gamestarted == false) {
                 console.log("Started!") //Debug log
-                document.getElementById("splashscreen").style.display = "none" //Hide the splash screen on start
-                document.getElementById("game-board").style.display = "grid" //Show the game board when started
+                splashScreen.style.display = "none" //Hide the splash screen on start
+                gameBoard.style.display = "grid" //Show the game board when started
                 controls() //Enable controls for the snake
                 gamestarted = true
             }
@@ -165,17 +166,8 @@
             if (secondsSinceLastRender < 1 / SNAKE_SPEED) return //if the time is less than 1, exit function, this controls the speed of the render
             console.log("Render"); //debug console log
             lastRenderTime = currentTime //sets the last render time to the current time
-
-
             update() //runs the update function, advancing the game by a frame
             draw() //redraws the gameboard with the new frame parameters
-
-            if (gameOver) { //if gameOver function returns true, alert the user that they lost the game.
-                if (confirm("You lost. Press OK to restart.")) { //alert that you lost the game with ok and cancel box
-                    window.location = "snakegame.html" //if confirm returns true (the user chooses OK, reload the page)
-                }
-                else return SNAKE_SPEED = 0, alert("Thank you for playing") //if the user chooses cancel, set the speed to 0 and tell the player thank you for playing. page must be reloaded to play again
-            }
         };
 
         function drawSnake(gameBoard) { //draws the snake on the game board
@@ -253,6 +245,12 @@
 
         function checkDeath() { //check if the snake is intersecting itself or outside the grid
             gameOver = outsideGrid(snakeBody[0]) || snakeIntersection()
+            
+            if (gameOver) {
+                console.log("You lost");
+                window.location.reload(true);
+                alert("You lost. Thank you for playing");
+            }
         }
 
         function outsideGrid(position) { //will return true if the x or y position is > the grid size or less than 1
@@ -268,7 +266,6 @@
         function updateScore() { //update the score if the snake eats something. this is called within the addSegments function
             scoreBoard.innerHTML = (score += 10)
         }
-        
     </script>
 </body>
 </html>
