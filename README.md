@@ -1,5 +1,5 @@
 # SimpleSnakeJS
-A simple Snake game implemented with JS, HTML, and CSS
+A simple Snake game implemented with JS, HTML, and CSS. It is heavily commented to help new coders learn how the game was built.
 
 # About this repo
 This is a simple project I worked on over the course of a few days. It's very basic right now but functions as a rudimentary game. You can copy this game and place it wherever you'd like.
