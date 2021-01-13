@@ -11,4 +11,6 @@ Simply download the HTML file and run it in any modern browser.
 Control the snake with the arrow keys.
 
 # How to contribute
-There are a ton of ways to make this better. Feel free to fork the repo and add new features. If they work well, I'll merge them.
+There are a ton of ways to make this better. Feel free to fork the repo and add new features. If they work well and they add to the game, I'll merge them.
+
+Currently, I'm working on adding an ending screen instead of an alert() when you lose the game. As it stands now, the page reloads to restart and that's not efficient.
