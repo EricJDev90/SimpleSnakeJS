@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!--This code is heavily commented to help new developers learn why each line is written the way it's written-->
 <html lang="en">
 <head>
     <title>Snake-JavaScript</title>
@@ -17,12 +17,12 @@
 
         main {
             min-height: 85vh;
-            width: 99vw;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 0;
             background-color: black;
+            color: #000000;
         }
 
         #game-board {
@@ -67,10 +67,9 @@
             margin-top: 3vh;
             width: 25%;
         }
-
     </style>
 </head>
-<body>
+<body class="col-lg-offset-0">
     <h1>Snake in JS</h1>
     <h2>Score:</h2>
     <h2 id="score-board">0</h2>
@@ -78,10 +77,10 @@
         <!--Create main game board-->
         <div id="game-board"></div>
         <!--Create cover for start screen-->
-        <div id="splashscreen"> 
+        <div id="splashscreen">
             <div id="splashscreen-content">
                 <h2>Snake in JS!</h2>
-                <input id="startbutton" type="button" value="Start(Enter)" onclick="startFunction()"/>
+                <input id="startbutton" type="button" value="Start (Enter)" onclick="startFunction()" />
                 <div id="controls-style">
                     <p>Controls:</p>
                     <p>Move snake: arrow keys</p>
@@ -92,7 +91,7 @@
     <script>
         /*Snake Game in Javascript*/
 
-        /*Create variables that store the last render, or drawing of the screen, the direction input to increase when a button is pressed, the last input given, 
+        /*Create variables that store the last render, or drawing of the screen, the direction input to increase when a button is pressed, the last input given,
         the initial placement of the food, number of new segments, and the score*/
         let lastRenderTime = 0;
         let inputDirection = {x: 0, y: 0}
@@ -105,7 +104,7 @@
         window.requestAnimationFrame(main); //start initial animation frame request
 
         /*Set the constants for how the game will run*/
-        var SNAKE_SPEED = 6;
+        var SNAKE_SPEED = 3;
         var EXPANSION_RATE = 1;
         var GRID_SIZE = 21; //21 squares for the horizontal game board and 21 for the vertical game board
 
@@ -138,6 +137,7 @@
 
         function controls(input) {
             window.addEventListener('keydown', e => { //Create an event listener for a keypress
+                e.preventDefault(); //Prevent default movement around the page
                 lastInputDirection = inputDirection //Store the last input as the current input when a button is pressed
                 switch (e.key) { //Switch statement for each of the arrow keys, storing the input direction as the amount of change when the board is re-drawn
                     case 'ArrowUp':
@@ -149,7 +149,7 @@
                         inputDirection = {x:0, y: 1}
                         break
                     case 'ArrowLeft':
-                        if (lastInputDirection.x !== 0) break   
+                        if (lastInputDirection.x !== 0) break
                         inputDirection = {x:-1, y: 0}
                         break
                     case 'ArrowRight':
@@ -208,7 +208,7 @@
             gameBoard.appendChild(foodElement)
         }
 
-        function onSnake(position, { ignoreHead = false } = {}) { 
+        function onSnake(position, { ignoreHead = false } = {}) {
             return snakeBody.some((segment, index) => {
                 if ( ignoreHead && index === 0 ) return false
                 return equalPositions(segment, position)
@@ -221,11 +221,13 @@
 
         function addSegments(amount) {
             newSegments += amount //add the number of new segments to be added
+            SNAKE_SPEED += 0.5;
             updateScore(); //adds a new score
-            for (let i = 0; i < newSegments; i++) { //adds the new snake body segments to the snake 
+            for (let i = 0; i < newSegments; i++) { //adds the new snake body segments to the snake
                 snakeBody.push({ ...snakeBody[snakeBody.length] })
             }
             newSegments = 0 //resets the new segments to 0
+            console.log(SNAKE_SPEED);
         }
 
         function getRandomFoodPosition() { //get new food position and check if the snake is on the food position
@@ -245,7 +247,7 @@
 
         function checkDeath() { //check if the snake is intersecting itself or outside the grid
             gameOver = outsideGrid(snakeBody[0]) || snakeIntersection()
-            
+
             if (gameOver) {
                 console.log("You lost");
                 window.location.reload(true);
@@ -255,7 +257,7 @@
 
         function outsideGrid(position) { //will return true if the x or y position is > the grid size or less than 1
             return (
-                position.x < 1 || position.x > GRID_SIZE || position.y < 1 || position.y > GRID_SIZE 
+                position.x < 1 || position.x > GRID_SIZE || position.y < 1 || position.y > GRID_SIZE
             )
         }
 
